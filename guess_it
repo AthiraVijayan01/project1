@@ -1,0 +1,133 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <time.h>
+
+// Function prototypes
+void showMainMenu();
+void showSettings();
+void startGame(int difficulty);
+void clearConsole();
+
+int main() {
+    int choice;
+    int difficulty = 1; // Default to Easy
+
+    while (1) {
+        clearConsole();
+        showMainMenu();
+        printf("Enter your choice: ");
+        scanf("%d", &choice);
+
+        switch (choice) {
+            case 1:
+                startGame(difficulty);
+                break;
+            case 2:
+                showSettings(&difficulty);
+                break;
+            case 3:
+                printf("Exiting the game. Goodbye!\n");
+                return 0;
+            default:
+                printf("Invalid choice. Please try again.\n");
+                break;
+        }
+
+        printf("Press Enter to continue...");
+        getchar(); // To consume the newline character left by scanf
+        getchar(); // To wait for Enter key press
+    }
+
+    return 0;
+}
+
+void showMainMenu() {
+    printf("========== Main Menu ==========\n");
+    printf("1. Start Game\n");
+    printf("2. Settings\n");
+    printf("3. Exit\n");
+    printf("================================\n");
+}
+
+void showSettings(int *difficulty) {
+    int choice;
+
+    printf("========== Settings ==========\n");
+    printf("1. Easy (1-100)\n");
+    printf("2. Hard (1-200)\n");
+    printf("3. Expert (1-500)\n");
+    printf("===============================\n");
+    printf("Enter your choice for difficulty: ");
+    scanf("%d", &choice);
+
+    switch (choice) {
+        case 1:
+            *difficulty = 1;
+            break;
+        case 2:
+            *difficulty = 2;
+            break;
+        case 3:
+            *difficulty = 3;
+            break;
+        default:
+            printf("Invalid choice. Keeping the current difficulty.\n");
+            break;
+    }
+
+    printf("Difficulty set to: %s\n", (*difficulty == 1) ? "Easy" : (*difficulty == 2) ? "Hard" : "Expert");
+}
+
+void startGame(int difficulty) {
+    int secret_number, guess, max_range, max_attempts;
+
+    switch (difficulty) {
+        case 1:
+            max_range = 100;
+            max_attempts = 10;
+            break;
+        case 2:
+            max_range = 200;
+            max_attempts = 7;
+            break;
+        case 3:
+            max_range = 500;
+            max_attempts = 5;
+            break;
+        default:
+            max_range = 100;
+            max_attempts = 10;
+            break;
+    }
+
+    srand(time(0));
+    secret_number = rand() % max_range + 1;
+
+    printf("I'm thinking of a number between 1 and %d.\n", max_range);
+    printf("You have %d attempts to guess it.\n", max_attempts);
+
+    for (int i = 0; i < max_attempts; i++) {
+        printf("Enter your guess: ");
+        scanf("%d", &guess);
+
+        if (guess < secret_number) {
+            printf("Too low!\n");
+        } else if (guess > secret_number) {
+            printf("Too high!\n");
+        } else {
+            printf("Congratulations! You guessed the number.\n");
+            return;
+        }
+    }
+
+    printf("Sorry, you've run out of attempts. The number was %d.\n", secret_number);
+}
+
+void clearConsole() {
+    // Platform-specific command to clear console
+    #ifdef _WIN32
+        system("cls");
+    #else
+        system("clear");
+    #endif
+}
